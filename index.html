@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesla</title>
+    <style>
+        body {
+            font-family: 'DM Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tesla-logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .nav-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+        }
+        .banner {
+            background-color: #f5f5f5;
+            padding: 10px;
+            text-align: center;
+        }
+        .vehicle-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+        }
+        .vehicle-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: #666;
+        }
+        .discounted-price {
+            color: #e10600;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="tesla-logo">TESLA</div>
+        <div class="nav-links">
+            <a href="                                                
+            <a href="#" onclick="showPage('lucky-code')">Lucky Code</a>
+            <a href="                                        
+            <a href="#" id="auth-button" onclick="login()">Sign In</a>
+        </div>
+    </div>
+    <div class="banner">0% APR Available · Learn More ×</div>
+    <div class="container">
+        <div id="inventory-page" class="page active">
+            <h1>Inventory</h1>
+            <div class="vehicle-grid">
+                <!-- Vehicle cards will be generated here -->
+            </div>
+        </div>
+        <div id="lucky-code-page" class="page" style="display: none;">
+            <h1>Tesla Lucky Draw</h1>
+            <input type="text" id="lucky-code-input" placeholder="Enter code">
+            <button onclick="checkLuckyCode()">Check My Code</button>
+            <p id="lucky-code-result"></p>
+        </div>
+        <div id="admin-page" class="page" style="display: none;">
+            <h1>Admin Dashboard</h1>
+            <input type="text" id="admin-username" placeholder="Username">
+            <input type="password" id="admin-password" placeholder="Password">
+            <button onclick="adminLogin()">Login</button>
+            <p id="admin-result"></p>
+        </div>
+        <div id="login-page" class="page" style="display: none;">
+            <h1>Login</h1>
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-password" placeholder="Password">
+            <button onclick="handleLogin()">Login</button>
+            <p id="login-result"></p>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https:                                                    
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, getDocs } from 'https:                                                          
+
+                                 
+        const firebaseConfig = {
+            apiKey: "AIzaSyAai8mFCTYpylV5DTSpBu2Grt_9Bfz_DWo",
+            authDomain: "tesla1-5c71d.firebaseapp.com",
+            projectId: "tesla1-5c71d",
+            storageBucket: "tesla1-5c71d.firebasestorage.app",
+            messagingSenderId: "998795417398",
+            appId: "1:998795417398:web:ef046c3d8efaf054078597"
+        };
+
+                              
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+                       
+        const vehicles = [
+            { model: 'Model 3', price: 45990, range: 358, seats: 5, wheels: '18"', towing: '2,000 lbs', image: 'https:                                                       
+            { model: 'Model Y', price: 54990, range: 330, seats: 7, wheels: '19"', towing: '3,500 lbs', image: 'https://images.unsplash.com/photo-1593697821252-2eb32f0ed8e2' },
+            { model: 'Model S', price: 89990, range: 405, seats: 5, wheels: '21"'"', towing: '5,000 lbs', image: 'https:                                                          
+            { model: 'Model X', price: 94990, range: 351, seats: 6, wheels: '20""', towing: '5,000 lbs', image: 'https:                                                          
+            { model: 'Cybertruck', price: 69990, range: 340, seats: 5, wheels: '20""', towing: '14,000 lbs', image: 'https:                                                         
+        ];
+
+                               
+        const vehicleGrid = document.querySelector('.vehicle-grid');
+        vehicles.forEach(vehicle => {
+            const card = document.createElement('div');
+            card.className = 'vehicle-card';
+            card.innerHTML = `
+                <img src="`
+                <img src="${vehicle.image}" alt="${vehicle.model}" class="vehicle-image">
+                <h2>${vehicle.model}</h2>
+                <p class="price"><span class="original-price">$${vehicle.price}</span> <span class="discounted-price">$${vehicle.price * 0.8}</span></p>
+                <p>Range: ${vehicle.range} mi</p>
+                <p>Seats: ${vehicle.seats}</p>
+                <p>Wheels: ${vehicle.wheels}</p>
+                <p>Towing: ${vehicle.towing}</p>
+                <button onclick="showDetails('${vehicle.model}')">View Details</button>
+            `;
+            vehicleGrid.appendChild(card);
+        });
+
+        // Show page function
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById(pageId + '-page').style.display = 'block';
+        }
+
+        // Login function
+        function login() {
+            showPage('login');
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    console.log('Logged in:', userCredential.user);
+                    document.getElementById('login-result').innerText = 'Logged in successfully!';
+                    document.getElementById('auth-button').innerText = 'Logout';
+                    document.getElementById('auth-button').onclick = logout;
+                })
+                .catch((error) => {
+                    console.error('Error logging
